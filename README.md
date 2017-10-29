@@ -23,7 +23,6 @@ Contact: Awak3ned@protonmail.com
 ```
 
 Welcome to Helploiter, this tool will help you write exploits in python.
-
 Automatize tests:
 Badchars
 Payloads
