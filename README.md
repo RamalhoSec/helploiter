@@ -21,6 +21,9 @@ Created by dropping from RamalhoSec Team!
 Contact: Awak3ned@protonmail.com
     """
     
+    
+    Youtube Video: https://www.youtube.com/watch?v=rd7w0wzNfo8
+    
     Welcome to Helploiter, this tool will help you write exploits in python.
 Automatize tests:
 Badchars
